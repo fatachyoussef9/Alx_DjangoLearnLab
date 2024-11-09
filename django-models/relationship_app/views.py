@@ -5,7 +5,9 @@ from django.shortcuts import render
 from .models import Library
 # Create your views here.
 from .models import Book
-
+from django.contrib.auth import login
+from django.contrib.auth import logout
+from django.contrib.auth import registration
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView
