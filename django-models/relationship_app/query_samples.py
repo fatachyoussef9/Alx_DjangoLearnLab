@@ -30,7 +30,18 @@ def librarian_for_library(library_name):
 
 # Example usage:
 if __name__ == "__main__":
-    # Replace with the names of the author and library you want to query
-    books_by_author('Author Name')
-    books_in_library('Library Name')
-    librarian_for_library('Library Name')
+    # Example: Replace with the names of the author and library you want to query
+    author_name = 'Author Name'  # Replace with the author's name
+    library_name = 'Library Name'  # Replace with the library's name
+
+    # Query for all books by the author
+    print("Checking books by author:")
+    books_by_author(author_name)
+
+    # Query for all books in the library
+    print("\nChecking books in library:")
+    books_in_library(library_name)
+
+    # Query for the librarian for a library
+    print("\nChecking librarian for library:")
+    librarian_for_library(library_name)
