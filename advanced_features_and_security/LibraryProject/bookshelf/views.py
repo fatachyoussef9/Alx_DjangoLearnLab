@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404
 from .models import UserProfile
 from .models import Book  # Assuming you have a Book model
-
+from .forms import ExampleForm
 def book_list(request):
     books = Book.objects.all()  # Fetch all books from the database
     return render(request, 'bookshelf/book_list.html', {'books': books})
