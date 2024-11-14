@@ -3,8 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404
 from .models import UserProfile
+from .models import Book  # Assuming you have a Book model
 
-
+def book_list(request):
+    books = Book.objects.all()  # Fetch all books from the database
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+["book_list"]
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_object(request):
     if request.method == 'POST':
