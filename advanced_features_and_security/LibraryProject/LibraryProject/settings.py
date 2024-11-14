@@ -148,3 +148,21 @@ CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")  # Allow inline scripts
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")   # Allow inline styles
 CSP_IMG_SRC = ("'self'",)
+
+
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS) settings
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply to all subdomains
+SECURE_HSTS_PRELOAD = True
+
+
+# Clickjacking protection: Prevents your site from being framed
+X_FRAME_OPTIONS = 'DENY'
+
+# Prevent browsers from sniffing content types
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser's XSS filtering
+SECURE_BROWSER_XSS_FILTER = True
