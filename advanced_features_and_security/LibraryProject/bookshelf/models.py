@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
-
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
 class Author(models.Model):
@@ -53,6 +54,35 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    class Meta:
+        permissions = [
+            ("can_view", "Can view model instances"),
+            ("can_create", "Can create model instances"),
+            ("can_edit", "Can edit model instances"),
+            ("can_delete", "Can delete model instances"),
+        ]
+
+    def setup_groups_and_permissions():
+        content_type = ContentType.objects.get_for_model(UserProfile)
+
+        permissions = {
+            "can_view": "Can view model instances",
+            "can_create": "Can create model instances",
+            "can_edit": "Can edit model instances",
+            "can_delete": "Can delete model instances",
+        }
+
+        # Assign permissions to groups
+        for group_name, perms in {
+            "Viewers": ["can_view"],
+            "Editors": ["can_view", "can_create", "can_edit"],
+            "Admins": ["can_view", "can_create", "can_edit", "can_delete"],
+        }.items():
+            group, created = Group.objects.get_or_create(name=group_name)
+            for perm_code in perms:
+                permission = Permission.objects.get(codename=perm_code, content_type=content_type)
+                group.permissions.add(permission)
     
 
 
