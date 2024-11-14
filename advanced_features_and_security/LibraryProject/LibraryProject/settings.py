@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sxyu6-mh6*m1dtn%ckx3eq)y^)3-crz0ztyds13!181*n7=3_6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -128,3 +128,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'relationship_app.CustomUser'
 ["bookshelf.CustomUser"]
+
+
+
+
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'  # Prevents the app from being embedded in an iframe
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browsers from guessing MIME types
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
+    # Other middlewares
+]
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")  # Allow inline scripts
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")   # Allow inline styles
+CSP_IMG_SRC = ("'self'",)
