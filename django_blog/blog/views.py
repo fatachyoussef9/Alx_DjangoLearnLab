@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import CommentForm, CustomUserCreationForm
 from .models import Post, Comment
+from django.db.models import Q
 
 
 def register(request):
@@ -123,3 +124,15 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
+    
+
+def search_posts(request):
+    query = request.GET.get('q')
+    posts = Post.objects.all()
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
