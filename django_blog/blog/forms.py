@@ -16,7 +16,7 @@ class ProfileUpdateForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
 
-    @login_required
+    @login_required # type: ignore
     def profile(request):
         if request.method == 'POST':
             form = ProfileUpdateForm(request.POST, instance=request.user)
