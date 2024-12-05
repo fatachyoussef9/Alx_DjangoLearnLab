@@ -6,6 +6,18 @@ from .models import Post, Comment
 from django.db.models import Q
 
 
+
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Post
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from .forms import CommentForm, CustomUserCreationForm
+from .models import Post, Comment
+from django.db.models import Q
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -37,27 +49,31 @@ def user_logout(request):
 def profile(request):
     return render(request, 'blog/profile.html', {'user': request.user})
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Post
-
 # ListView
 class PostListView(ListView):
     model = Post
     template_name = "blog/post_list.html"
     context_object_name = "posts"
 
+    def get_queryset(self):
+        # You can add filtering here if needed, for example by tags or date.
+        return Post.objects.all()
+
 # DetailView
 class PostDetailView(DetailView):
     model = Post
     template_name = "blog/post_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        context['comment_form'] = CommentForm()
+        return context
+
 # CreateView
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ["title", "content"]
+    fields = ["title", "content", "tags"]
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
@@ -67,7 +83,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 # UpdateView
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ["title", "content"]
+    fields = ["title", "content", "tags"]
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
@@ -124,15 +140,18 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
-    
 
+# Search Functionality
 def search_posts(request):
     query = request.GET.get('q')
-    posts = Post.objects.all()
+    posts = Post.objects.all()  # Fetch all posts initially
+    
     if query:
+        # Use Post.objects.filter to filter based on title, content, or tags
         posts = posts.filter(
             Q(title__icontains=query) |
             Q(content__icontains=query) |
             Q(tags__name__icontains=query)
         ).distinct()
+
     return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
