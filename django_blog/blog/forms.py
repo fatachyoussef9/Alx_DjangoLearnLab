@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
+from django_blog.blog.models import Comment
+
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -26,3 +28,10 @@ class ProfileUpdateForm(forms.ModelForm):
         else:
             form = ProfileUpdateForm(instance=request.user)
         return render(request, 'blog/profile.html', {'user': request.user, 'form': form})
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+        
