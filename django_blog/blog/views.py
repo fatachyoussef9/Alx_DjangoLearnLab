@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import CommentForm, CustomUserCreationForm
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from django.db.models import Q
 
 
@@ -155,3 +155,13 @@ def search_posts(request):
         ).distinct()
 
     return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list_by_tag.html'  # Create a template for this view
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)  # Get the tag by its slug
+        return Post.objects.filter(tags=tag)  # Filter posts by the tag

@@ -22,3 +22,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author} on {self.post}"
+    
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)  # Tag name (e.g., "Django", "Python")
+    slug = models.SlugField(unique=True)  # Slug for URL-friendly version of the name
+    created_at = models.DateTimeField(auto_now_add=True)  # Automatically set the creation date
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        # Automatically create a slug from the name if it's not provided
+        if not self.slug:
+            self.slug = self.name.lower().replace(' ', '-')
+        super().save(*args, **kwargs)
