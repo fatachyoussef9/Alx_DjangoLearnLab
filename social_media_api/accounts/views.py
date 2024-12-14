@@ -2,7 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import CustomUser
@@ -27,3 +28,29 @@ def login(request):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    try:
+        user_to_follow = CustomUser.objects.get(id=user_id)
+        if user_to_follow != request.user:
+            request.user.following.add(user_to_follow)
+            return Response({'message': 'You are now following this user.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unfollow_user(request, user_id):
+    try:
+        user_to_unfollow = CustomUser.objects.get(id=user_id)
+        if user_to_unfollow in request.user.following.all():
+            request.user.following.remove(user_to_unfollow)
+            return Response({'message': 'You have unfollowed this user.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'You are not following this user.'}, status=status.HTTP_400_BAD_REQUEST)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
