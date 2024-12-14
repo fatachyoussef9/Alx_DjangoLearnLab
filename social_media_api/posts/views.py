@@ -72,3 +72,5 @@ def unlike_post(request, pk):
         like.delete()
         return Response({"message": "Post unliked"})
     return Response({"message": "You haven't liked this post yet"}, status=400)
+
+#  generics.get_object_or_404(Post, pk=pk)
