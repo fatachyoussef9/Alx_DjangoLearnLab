@@ -124,4 +124,6 @@ class UnfollowUserView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
+# generics.GenericAPIView
+# permissions.IsAuthenticated
+# CustomUser.objects.all()
