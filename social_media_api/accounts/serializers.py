@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
 # Get the user model dynamically
-User = get_user_model()
+User = get_user_model().objects.create_user
 
 class UserSerializer(serializers.ModelSerializer):
     # Add a token field to the serializer output
@@ -22,7 +22,10 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         # Generate a token for the new user
-        token, _ = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.create(user=user)
         # Attach the token to the user instance for serializer output
         user.token = token.key
         return user
+    
+
+# serializers.CharField()
