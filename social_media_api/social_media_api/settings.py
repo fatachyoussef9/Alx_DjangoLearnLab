@@ -152,4 +152,3 @@ SECURE_SSL_REDIRECT = True  # Redirect all traffic to HTTPS
 
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME')
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-["STATIC_ROOT"]
